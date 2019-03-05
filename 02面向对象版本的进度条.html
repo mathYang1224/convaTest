@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>02面向对象版本的进度条</title>
+	<style>
+		body {
+			padding: 0;
+			margin: 0;
+			background-color: #f0f0f0;
+			overflow: hidden;
+		}
+	</style>
+	<script src="bower_components/konva/konva.min.js"></script>
+	<script src="js/ProgressBar.js"></script>
+</head>
+<body>
+	<div id="container">
+	</div>
+
+	<script>
+		//创建舞台
+		var stage = new Konva.Stage({
+			container: 'container',
+			width: window.innerWidth,//全屏
+			height: window.innerHeight
+		});
+
+		//创建层
+		var layer = new Konva.Layer();
+		stage.add(layer);
+	
+		//中心点坐标
+		var cenX = stage.width() / 2;
+		var cenY = stage.height() / 2;
+
+		var option = {
+			x: 1/8 * stage.width(),		//进度条x坐标
+			y: 1/2 * stage.height(),	//进度条y坐标
+			w: 3/4 * stage.width(),		//进度条的宽度
+			h: 1/12 * stage.height(),	//进度条的高度
+			fillStyle: 'red',			//进度条内部矩形的填充的颜色
+			strokeStyle: 'blue'			//进度条的外边框的颜色
+		};
+
+		// 创建 进度条对象实例
+		var p = new ProgressBar( option );
+
+		//把进度条放到 层中
+		p.addToGroupOrLayer( layer );
+		
+		//渲染层
+		layer.draw();
+
+		p.changeValue( .5 );
+	</script>
+</body>
+</html>

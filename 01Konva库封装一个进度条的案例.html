@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>01进度条案例</title>
+	<style>
+		body {
+			padding: 0;
+			margin: 0;
+			background-color: #f0f0f0;
+			overflow: hidden;
+		}
+	</style>
+	<script src="bower_components/konva/konva.js"></script>
+</head>
+<body>
+	<!-- 存放canvas画布的容器 ，这个必须要有 -->
+	<div id="container">
+	</div>
+
+	<script>
+		//第一步： 创建舞台
+		var stage = new Konva.Stage({
+			container: 'container', //设置当前舞台的容器
+			width: window.innerWidth,//设置舞台的宽高全屏
+			height: window.innerHeight
+		});
+
+		//第二步： 创建层，一个舞台可以有多个层
+		var layer = new Konva.Layer();
+
+		//第三步： 把层添加到舞台上去。
+		stage.add(layer);
+
+		//我们可以添加多层： 背景层， 动画层，  光照层 png
+	
+		//中心点坐标
+		var cenX = stage.width() / 2;
+		var cenY = stage.height() / 2;
+
+		// 第四步： 创建形状对象，然后把形状放到层上去
+		var innerRect = new Konva.Rect({
+			x: 1/8 * stage.width(), // stage.width(),获得舞台的宽度，  x：设置当前矩形x坐标
+			y: 1/2 * stage.height(),
+			width: 0, //设置矩形的宽度
+			height: 1/12 * stage.height(), //设置矩形的高度
+			fill: '#cdcd00',
+			cornerRadius: 1/24 * stage.height()
+		});
+
+		// 第五步： 把矩形放到层
+		layer.add( innerRect );
+
+
+		//添加一个外边框的 矩形
+		var outerRect = new Konva.Rect({
+			x: 1/8 * stage.width(), // stage.width(),获得舞台的宽度，  x：设置当前矩形x坐标
+			y: 1/2 * stage.height(),
+			width: 3/4 * stage.width(), //设置矩形的宽度
+			height: 1/12 * stage.height(), //设置矩形的高度
+			stroke: '#e0ffff', // 设置了stroke那么，矩形就进行描边
+			strokeWidth: 4, // 设置边框的宽度，
+			cornerRadius: 1/24 * stage.height()
+		});
+		layer.add( outerRect );
+
+
+		// 第六步: 把层渲染到 舞台上去。
+		layer.draw();
+
+
+		// 对象： 属性和行为，属性和方法（函数）的集合
+		// 进度条的：
+		//属性：  width， height ， x， y  ，innerStyle， outerStyle ， cornerRadius
+		//行为：修改进度条的进度  changeValue( val )     
+		// 把进度条添加到层：addToGroupOrLayer( arg );
+
+
+		
+	</script>
+</body>
+</html>

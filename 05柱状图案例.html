@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title> 05 柱状图 </title>
+	<style>
+		body {
+			padding: 0;
+			margin: 0;
+			background-color: #f0f0f0;
+			overflow: hidden;
+		}
+	</style>
+	<script src="bower_components/konva/konva.min.js"></script>
+</head>
+<body>
+	<div id="container">
+	</div>
+
+	<script>
+		//创建舞台
+		var stage = new Konva.Stage({
+			container: 'container',
+			width: window.innerWidth,//全屏
+			height: window.innerHeight
+		});
+
+		//创建层
+		var layer = new Konva.Layer();
+		stage.add(layer);
+
+		//中心点坐标
+		var cenX = stage.width() / 2;
+		var cenY = stage.height() / 2;
+
+		//柱状图的数据
+		var data = [
+			{ name: '前端', value: '.8', color: 'green'},
+			{ name: 'PHP', value: '.3', color: 'blue'},
+			{ name: 'Java', value: '.7', color: 'red'},
+			{ name: 'UI', value: '.9', color: 'orange'},
+			{ name: 'IOS', value: '.4', color: 'purple'},
+			{ name: 'Android', value: '.9', color: 'pink'}
+		];
+
+		var x0 = 1/8 * stage.width();  		//柱状图原点的坐标
+		var y0 = 3/4 * stage.height();
+
+		var width = 3/4 * stage.width();	//柱状图的最大宽度
+		var height = 1/2 * stage.height();  //柱状图的高度
+
+		//绘制底线
+		var bsLine = new Konva.Line({
+			//x:从 1/8 x,  3/4
+			//y: 3/4 高度处
+			points: [x0,y0, x0+width, y0], //
+			strokeWidth: 1,
+			stroke: 'lightgreen',
+		});
+
+		layer.add( bsLine );
+
+		//定义 矩形和矩形两边的 边距的宽度
+		var rectWidth =  width / data.length;
+		//绘制柱状图的矩形：  遍历每一条数据然后生成一个矩形
+
+		// forEach： 是EcamScript5之后添加的新语法，可以替代for循环，
+		//数组的方法。
+		// ie9以上才支持。注意兼容性。
+		data.forEach(function(item, index) {// item:数组中元素，index是索引值
+			//生成一个矩形
+			var rect = new Konva.Rect({
+				x: x0 + (1/4 + index ) * rectWidth,//
+				y: y0 - item.value * height,
+				width: 1/2 * rectWidth,
+				height: item.value * height,
+				fill: item.color,
+				opacity: .8,		 //设置透明度
+				cornerRadius: 10,	 //设置圆角
+				shadowBlur: 10,		  //设置阴影的模糊级别
+				shadowColor: 'black',//设置阴影的颜色
+				// shadowOffsetX: 4, //设置阴影的X偏移量
+				// shadowOffsetY: 4	 //设置应用的Y偏移量
+			});
+			layer.add( rect );
+
+			//把百分比的文字放到 柱状图的顶部
+			var text = new Konva.Text({
+				x: x0 + (index ) * rectWidth,//
+				y: y0 - item.value * height - 14,
+				fontSize: 14,
+				text: item.value * 100 + '%',
+				fill: item.color,
+				width: rectWidth,// 配合让文字居中
+				align: 'center',  //
+				name: 'textPercent'  //设置文字的name后，可以通过类选择器进行选取。
+			});
+			layer.add( text );
+
+			//把百分比的文字放到 柱状图的顶部
+			var textBottom = new Konva.Text({
+				x: x0 + (1/4 + index ) * rectWidth,//
+				y: y0,
+				fontSize: 14,
+				text: item.name,
+				fill: item.color,
+				// width: rectWidth,// 配合让文字居中
+				// align: 'center',  //
+				rotation: 30
+			});
+			layer.add( textBottom );
+
+		});
+
+		// for( var i =0; i<data.length; i++ ) {
+		// 	item = data[i];
+		// 	index = i;
+		// }
+
+		layer.draw();
+
+
+		// 点击任何的 舞台的区域的时候，都会触发下面的事件
+		stage.on('contentClick',function() {
+			//让柱状图进行动画展示
+
+			//让状态图的中所有矩形 height：0，  y-> y0
+			// 拿到所有的矩形
+			//类型的选择器是通过 形状的类名进行选择
+			layer.find('Rect').each(function( item, index ){
+				// each是Konva的数组提供的方法，只能用于Konva的数组，或者是Konva选择器选择出来的元素上。
+
+				item.y(y0);//在konva中，如果传参数：设置值， 如果不传参代表取值
+				item.height(0);
+				//动画显示到 初始的状态
+				item.to({
+					duration: 1,
+					y: y0 - data[index].value * height,
+					height: data[index].value * height
+				});
+			});
+
+			//把文字设置一下动画
+			// 类型选择器是通过 name属性来选取。
+			layer.find('.textPercent').each(function(item, index ){
+				// each函数第一个参数是元素对象，第二个参数是索引值
+				item.y(y0 - 14);
+				item.to({
+					duration: 1,
+					y: y0 - data[index].value * height - 14,
+				});
+			});
+
+		});
+
+	</script>
+</body>
+</html>

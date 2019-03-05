@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title></title>
+	<style>
+		body {
+			padding: 0;
+			margin: 0;
+			background-color: #f0f0f0;
+			overflow: hidden;
+		}
+	</style>
+	<script src="bower_components/konva/konva.min.js"></script>
+</head>
+<body>
+	<div id="container">
+	</div>
+
+	<script>
+		//创建舞台
+		var index = 0; //动画的索引
+		var stage = new Konva.Stage({
+			container: 'container',
+			width: window.innerWidth,//全屏
+			height: window.innerHeight
+		});
+
+		//创建层
+		var layer = new Konva.Layer();
+		stage.add(layer);
+	
+		//中心点坐标
+		var cenX = stage.width() / 2;
+		var cenY = stage.height() / 2;
+
+		
+	    var data = [ 
+	    	{ name: "前端", value: .25, color: '#e0e'  },
+	    	{ name: "php",  value: .2,  color: 'orange'},
+	    	{ name: "UI",	value: .3,	color: 'blue'  },
+			{ name: "C++",	value: .05,	color: 'green' },
+			{ name: "游戏",	value: .1,	color: 'purple'},
+			{ name: "Java",	value: .1,	color: 'red'   }
+		];
+
+		var x0 = cenX,
+			y0 = cenY;
+
+		var tempAngel = -90;
+		data.forEach(function(item, index) {
+				//做一个扇形
+			// wedge: 楔形物
+			var angle = 360*item.value;
+			//创建一个扇形
+			var wedge = new  Konva.Wedge({
+				x: x0,		//扇形圆心坐标
+				y: y0,
+				angle: angle ,	//扇形的角度
+				radius: 100,	//扇形的半径
+				fill: item.color,	//扇形的填充颜色
+				rotation: tempAngel //扇形的旋转角度
+			});
+
+			layer.add( wedge );
+			//绘制文本的 角度
+			var textAngle = tempAngel + 1/2 * angle;
+
+			//绘制的 百分比的文本
+			var text = new Konva.Text({
+				x: x0 + (100+20) * Math.cos(Math.PI/ 180 * textAngle ),
+				y: y0+ (100+20) * Math.sin(Math.PI/ 180 * textAngle ),
+				text: item.value*100 +'%',
+				fill: item.color
+			});
+
+			//根据角度判断设置文字的 位置
+			if(  textAngle > 90 && textAngle < 270 ) {
+				//让文本向左边 移动文字宽度的位置。
+				text.x( text.x() - text.getWidth() );
+			}
+
+			layer.add( text );
+			
+			tempAngel += angle;
+		});
+
+		//绘制外圆
+		var cir = new Konva.Circle({
+			x: x0,
+			y: y0,
+			radius: 110,
+			stroke: '#ccc',
+			strokeWidth: 2
+		});
+
+		layer.add( cir );
+	
+		layer.draw();
+
+		
+		//拿到所有的扇形
+		var wedges = layer.find('Wedge');
+
+		wedges.each(function( item, index ){
+			item.angle(0);//让所有的扇形清零
+		})
+
+		// 绘制动画
+		function animatePie() {
+			//拿到所有的扇形
+			var item = wedges[index]; //取到要进行动画的扇形
+			item.to({
+				angle: data[index].value * 360, //动画的角度
+				duration: data[index].value * 3, //动画执行的时间
+				onFinish: function() { //当动画结束之后，执行此方法
+					index++;
+					if( index >= data.length ) {
+						return;//立即结束当前函数。
+					}
+					//继续调用自己，执行下一个扇形的动画
+					animatePie();
+				}
+			});
+		}
+
+		//执行第一个扇形的动画
+		animatePie();
+
+
+
+		// var c = 1;
+
+		// add();//  
+
+		// //函数提升
+		// function add( ) {
+		// 	var a = 0;
+		// 	var c;
+
+		// 	console.log(a);  // 0
+		// 	console.log(c);  // 1?  0 ?  undefied?
+		// 	c = 0;
+		// 	//变量提升
+		// }
+
+		// add.prototype = {};
+
+
+
+	</script>
+</body>
+</html>
